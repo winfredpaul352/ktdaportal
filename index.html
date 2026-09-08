@@ -797,6 +797,37 @@ a{color:#0070f2;text-decoration:none;cursor:pointer}
 .org-tile-title{font-size:11px;font-weight:700;color:var(--text-primary);margin-bottom:2px}
 .org-tile-sub{font-size:9px;color:var(--text-secondary)}
 
+/* Detail Modal (reusable) */
+.detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2500;opacity:0;pointer-events:none;transition:opacity .25s}
+.detail-overlay.open{opacity:1;pointer-events:auto}
+.detail-panel{position:fixed;bottom:0;left:50%;transform:translateX(-50%) translateY(100%);width:100%;max-width:390px;max-height:80vh;background:#fff;border-radius:16px 16px 0 0;z-index:2501;transition:transform .35s cubic-bezier(.4,0,.2,1);overflow:hidden;display:flex;flex-direction:column}
+.detail-overlay.open+.detail-panel,.detail-panel.open{transform:translateX(-50%) translateY(0)}
+.detail-panel-header{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px;border-bottom:1px solid var(--border-light);flex-shrink:0}
+.detail-panel-header h3{font-size:14px;font-weight:700;margin:0;color:var(--text-primary)}
+.detail-panel-close{width:28px;height:28px;border:none;background:var(--bg-subtle);border-radius:50%;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-secondary)}
+.detail-panel-body{padding:14px 16px 20px;overflow-y:auto;flex:1}
+.detail-section{margin-bottom:14px}
+.detail-section-title{font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text-tertiary);letter-spacing:.5px;margin-bottom:6px}
+.detail-row{display:flex;justify-content:space-between;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--border-light);font-size:12px}
+.detail-row:last-child{border-bottom:none}
+.detail-row-label{color:var(--text-secondary);flex:0 0 40%}
+.detail-row-value{color:var(--text-primary);font-weight:500;text-align:right;flex:1}
+.detail-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px}
+.detail-badge.pending{background:#fff3e0;color:var(--warning)}
+.detail-badge.approved{background:#e6f4ea;color:var(--positive)}
+.detail-actions{display:flex;gap:8px;margin-top:14px}
+.detail-actions button{flex:1;padding:10px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;border:none;transition:var(--transition)}
+.detail-actions .da-primary{background:var(--ktda-green);color:#fff}
+.detail-actions .da-secondary{background:var(--bg-subtle);color:var(--text-primary)}
+.detail-actions .da-danger{background:#fef2f2;color:#dc2626}
+
+/* All Actions Menu */
+.actions-menu{position:absolute;top:100%;right:0;background:#fff;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,.15);padding:6px 0;z-index:100;min-width:200px;display:none}
+.actions-menu.open{display:block}
+.actions-menu-item{padding:10px 14px;font-size:12px;color:var(--text-primary);cursor:pointer;display:flex;align-items:center;gap:8px;transition:background .15s}
+.actions-menu-item:active{background:var(--bg-subtle)}
+.actions-menu-item svg{width:16px;height:16px;fill:var(--text-secondary)}
+
 </style>
 </head>
 <body>
@@ -1040,22 +1071,22 @@ a{color:#0070f2;text-decoration:none;cursor:pointer}
 
   <div class="section-title" style="margin-top:4px">Organizational Updates</div>
   <div style="padding:0 14px 12px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
-    <div class="org-tile" onclick="sfToast('Opening KTDA Annual Report 2025/26')">
+    <div class="org-tile" onclick="showOrgUpdate('KTDA Annual Report 2025/26','<div class=\'detail-section\'><p><b>Financial Highlights:</b></p><div class=\'detail-row\'><span class=\'detail-row-label\'>Revenue</span><span class=\'detail-row-value\'>KES 98.2B</span></div><div class=\'detail-row\'><span class=\'detail-row-label\'>Green Leaf Intake</span><span class=\'detail-row-value\'>1.42B kg</span></div><div class=\'detail-row\'><span class=\'detail-row-label\'>Factories Operational</span><span class=\'detail-row-value\'>71 of 71</span></div><div class=\'detail-row\'><span class=\'detail-row-label\'>Employee Count</span><span class=\'detail-row-value\'>5,623</span></div><div class=\'detail-row\'><span class=\'detail-row-label\'>Farmer Payments</span><span class=\'detail-row-value\'>KES 72.1B</span></div></div><p style=\'font-size:11px;color:var(--text-secondary)\'>The full report is available on the KTDA intranet portal.</p>')">
       <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:var(--ktda-green)"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
       <div class="org-tile-title">KTDA Annual Report</div>
       <div class="org-tile-sub">2025/26 FY Results</div>
     </div>
-    <div class="org-tile" onclick="sfToast('Opening Tea Awards Ceremony details')">
+    <div class="org-tile" onclick="showOrgUpdate('Tea Awards Ceremony 2026','<p><b>Date:</b> September 30, 2026</p><p><b>Venue:</b> Kenyatta International Convention Centre, Nairobi</p><p><b>Theme:</b> Celebrating Excellence in Kenya\'s Tea Industry</p><p style=\'margin-top:8px\'>Categories include:</p><ul style=\'margin:4px 0 8px 16px;font-size:11px\'><li>Best Factory Performance</li><li>Innovation in Tea Processing</li><li>Sustainability Champion</li><li>Employee of the Year</li><li>Best Health &amp; Safety Record</li></ul><p style=\'font-size:11px;color:var(--text-secondary)\'>RSVP deadline: Sep 20. Contact HR for transport arrangements.</p>')">
       <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:#c8a951"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94.63 1.5 1.98 2.63 3.61 2.96V19H7v2h10v-2h-4v-3.1c1.63-.33 2.98-1.46 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2z"/></svg>
       <div class="org-tile-title">Tea Awards 2026</div>
       <div class="org-tile-sub">Ceremony Sep 30</div>
     </div>
-    <div class="org-tile" onclick="sfToast('Opening Digital Workplace initiative')">
+    <div class="org-tile" onclick="showOrgUpdate('Digital Workplace Initiative','<p><b>SAP Rollout Phase 2</b> is underway across all KTDA subsidiaries.</p><p style=\'margin-top:8px\'><b>Completed (Phase 1):</b></p><ul style=\'margin:4px 0 8px 16px;font-size:11px\'><li>SAP SuccessFactors Employee Central</li><li>SAP SuccessFactors Payroll</li><li>Employee Self-Service Portal</li></ul><p><b>In Progress (Phase 2):</b></p><ul style=\'margin:4px 0 8px 16px;font-size:11px\'><li>SAP SuccessFactors Learning (Oct 2026)</li><li>SAP SuccessFactors Recruiting (Nov 2026)</li><li>SAP Analytics Cloud dashboards (Dec 2026)</li><li>Mobile clock-in/clock-out at all 71 factories</li></ul><p style=\'font-size:11px;color:var(--text-secondary)\'>Training sessions are scheduled monthly. Check with your line manager for dates.</p>')">
       <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:#0070f2"><path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/></svg>
       <div class="org-tile-title">Digital Workplace</div>
       <div class="org-tile-sub">SAP Rollout Phase 2</div>
     </div>
-    <div class="org-tile" onclick="sfToast('Opening Wellness Program details')">
+    <div class="org-tile" onclick="showOrgUpdate('Wellness Program','<p><b>Mental Health Awareness Week</b><br>October 12-16, 2026</p><p style=\'margin-top:8px\'>Activities planned:</p><ul style=\'margin:4px 0 8px 16px;font-size:11px\'><li>Mon: Stress management workshop</li><li>Tue: Free health screenings</li><li>Wed: Guided meditation sessions</li><li>Thu: Financial wellness seminar</li><li>Fri: Team wellness challenge &amp; awards</li></ul><p style=\'margin-top:8px\'><b>Ongoing Programs:</b></p><ul style=\'margin:4px 0 8px 16px;font-size:11px\'><li>Employee Assistance Program (EAP) - 24/7 helpline</li><li>On-site clinic at Kericho Factory</li><li>Annual health check-ups (covered by NHIF)</li><li>Gym membership subsidy (50%)</li></ul>')">
       <svg viewBox="0 0 24 24" style="width:20px;height:20px;fill:#e74c3c"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
       <div class="org-tile-title">Wellness Program</div>
       <div class="org-tile-sub">Mental Health Week Oct</div>
@@ -1070,7 +1101,7 @@ a{color:#0070f2;text-decoration:none;cursor:pointer}
   <div class="profile-header">
     <div class="profile-avatar-wrap">
       <div class="profile-avatar">JO</div>
-      <button class="profile-actions-btn">All Actions</button>
+      <div style="position:relative;display:inline-block"><button class="profile-actions-btn" onclick="toggleActionsMenu()">All Actions</button><div class="actions-menu" id="allActionsMenu"><div class="actions-menu-item" onclick="actionMenuItem('edit_profile')"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>Edit Profile</div><div class="actions-menu-item" onclick="actionMenuItem('change_photo')"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>Change Photo</div><div class="actions-menu-item" onclick="actionMenuItem('request_leave')"><svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>Request Time Off</div><div class="actions-menu-item" onclick="actionMenuItem('view_pay')"><svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>View Payslip</div><div class="actions-menu-item" onclick="actionMenuItem('org_chart')"><svg viewBox="0 0 24 24"><path d="M22 11V3h-7v3H9V3H2v8h7V8h2v10h4v3h7v-8h-7v3h-2V8h2v3z"/></svg>Org Chart</div></div></div>
     </div>
     <div class="profile-status"><span class="profile-status-dot"></span>Active &middot; On duty</div>
     <div class="profile-name">James Ochieng</div>
@@ -1099,7 +1130,7 @@ a{color:#0070f2;text-decoration:none;cursor:pointer}
           <div class="info-row"><span class="info-label">Date of Birth</span><span class="info-value" data-field="dob">Mar 14, 1988</span></div>
           <div class="info-row"><span class="info-label">Country of Birth</span><span class="info-value" data-field="country">Kenya</span></div>
         </div>
-        <div class="view-all">View All</div>
+        <div class="view-all" onclick="viewAllPersonalInfo()">View All</div>
       </div>
       <div class="info-card" data-card="natid">
         <div class="info-card-header"><span class="info-card-title">National ID Information</span><div class="info-card-actions"><button class="info-card-action" onclick="toggleEdit(this)"><svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg></button></div></div>
@@ -1228,7 +1259,7 @@ a{color:#0070f2;text-decoration:none;cursor:pointer}
 
   <div class="section-title">Benefit Actions</div>
   <div class="benefits-actions">
-    <div class="ba-card" onclick="sfToast('Open Enrollment period starts Jan 2027')">
+    <div class="ba-card" onclick="showOpenEnrollment()">
       <div class="ba-icon" style="background:linear-gradient(135deg,#2d6a3f,#4a9960)"><svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13z"/></svg></div>
       <div><div class="ba-text">Enroll 2027</div><div class="ba-sub">Due in 115 days</div></div>
     </div>
@@ -1236,17 +1267,17 @@ a{color:#0070f2;text-decoration:none;cursor:pointer}
       <div class="ba-icon" style="background:linear-gradient(135deg,#0070f2,#4da3ff)"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></div>
       <div><div class="ba-text">View Statement</div></div>
     </div>
-    <div class="ba-card" onclick="sfToast('Life event form opened')">
+    <div class="ba-card" onclick="showLifeEvent()">
       <div class="ba-icon" style="background:linear-gradient(135deg,#c8a951,#dfc06a)"><svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></div>
       <div><div class="ba-text">Life Event</div></div>
     </div>
-    <div class="ba-card" onclick="sfToast('Claims portal opening')">
+    <div class="ba-card" onclick="showClaims()">
       <div class="ba-icon" style="background:linear-gradient(135deg,#7b2fbe,#a855f7)"><svg viewBox="0 0 24 24"><path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2z"/></svg></div>
       <div><div class="ba-text">Access Claims</div></div>
     </div>
   </div>
 
-  <div class="section-title">Enrolled Benefits (6 of 10) <span class="section-more">View All</span></div>
+  <div class="section-title">Enrolled Benefits (6 of 10) <span class="section-more" onclick="viewAllBenefits()">View All</span></div>
   <div class="enrolled-section">
     <div class="enrolled-card">
       <div class="enrolled-header">
@@ -1333,7 +1364,7 @@ a{color:#0070f2;text-decoration:none;cursor:pointer}
     <div class="family-header">
       <span class="family-header-title">Dependents</span>
       <div class="family-actions">
-        <button class="family-btn edit" onclick="sfToast('Edit mode enabled')">Edit</button>
+        <button class="family-btn edit" onclick="sfToast('Edit mode enabled - tap any field to modify')">Edit</button>
         <button class="family-btn manage" onclick="openAddFamily()">Add Member</button>
       </div>
     </div>
@@ -1434,11 +1465,11 @@ a{color:#0070f2;text-decoration:none;cursor:pointer}
   </div>
   <div style="padding:10px 14px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-      <button style="border:none;background:var(--ktda-green-pale);color:var(--ktda-green);font-weight:700;font-size:11px;padding:6px 12px;border-radius:8px;cursor:pointer;font-family:inherit" onclick="sfToast('Navigating to today')">Today</button>
+      <button style="border:none;background:var(--ktda-green-pale);color:var(--ktda-green);font-weight:700;font-size:11px;padding:6px 12px;border-radius:8px;cursor:pointer;font-family:inherit" onclick="renderCalendar();sfToast('Showing current month')">Today</button>
       <div style="font-size:14px;font-weight:700;color:var(--text-primary)">September 2026</div>
       <div style="display:flex;gap:4px">
-        <button style="width:28px;height:28px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer;font-size:14px;color:var(--text-secondary)" onclick="sfToast('Previous month')">&lsaquo;</button>
-        <button style="width:28px;height:28px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer;font-size:14px;color:var(--text-secondary)" onclick="sfToast('Next month')">&rsaquo;</button>
+        <button style="width:28px;height:28px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer;font-size:14px;color:var(--text-secondary)" onclick="showOrgUpdate('August 2026','<p style=\'text-align:center;color:var(--text-secondary)\'>Calendar navigation is available in the full SAP SuccessFactors Time Management module.</p><p style=\'text-align:center;margin-top:8px\'><b>Leave taken in August:</b></p><div class=\'detail-row\'><span class=\'detail-row-label\'>Compassionate Leave</span><span class=\'detail-row-value\'>Aug 25-26 (2 days)</span></div>')">&lsaquo;</button>
+        <button style="width:28px;height:28px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer;font-size:14px;color:var(--text-secondary)" onclick="showOrgUpdate('October 2026','<p style=\'text-align:center;color:var(--text-secondary)\'>Calendar navigation is available in the full SAP SuccessFactors Time Management module.</p><p style=\'text-align:center;margin-top:8px\'><b>Upcoming:</b></p><div class=\'detail-row\'><span class=\'detail-row-label\'>Mental Health Week</span><span class=\'detail-row-value\'>Oct 12-16</span></div><div class=\'detail-row\'><span class=\'detail-row-label\'>OSHA Training</span><span class=\'detail-row-value\'>Oct 14-18</span></div>')">&rsaquo;</button>
       </div>
     </div>
     <div class="cal-header">
@@ -1488,21 +1519,21 @@ a{color:#0070f2;text-decoration:none;cursor:pointer}
       <div class="wf-item-title">Annual Leave - Sep 15 to Sep 19</div>
       <div class="wf-item-sub">5 days &middot; Approver: Mary Wanjiku</div>
       <span class="wf-item-status pending">Pending Manager Approval</span>
-      <div class="wf-item-actions"><button class="wf-withdraw-btn" onclick="withdrawRequest(this,'Annual Leave request')">Withdraw Request</button><button class="wf-view-btn" onclick="sfToast('Opening request details...')">View Details</button></div>
+      <div class="wf-item-actions"><button class="wf-withdraw-btn" onclick="withdrawRequest(this,'Annual Leave request')">Withdraw Request</button><button class="wf-view-btn" onclick="viewWfDetails(this)">View Details</button></div>
     </div>
     <div class="wf-item" id="wfItemProfile">
       <div class="wf-item-header"><span class="wf-item-type">Profile Change</span><span class="wf-item-date">Sep 4, 2026</span></div>
       <div class="wf-item-title">Address Update - P.O. Box 2194, Kericho</div>
       <div class="wf-item-sub">Personal Data &middot; Approver: Mary Wanjiku</div>
       <span class="wf-item-status pending">Pending Manager Approval</span>
-      <div class="wf-item-actions"><button class="wf-withdraw-btn" onclick="withdrawRequest(this,'Address Update request')">Withdraw Request</button><button class="wf-view-btn" onclick="sfToast('Opening request details...')">View Details</button></div>
+      <div class="wf-item-actions"><button class="wf-withdraw-btn" onclick="withdrawRequest(this,'Address Update request')">Withdraw Request</button><button class="wf-view-btn" onclick="viewWfDetails(this)">View Details</button></div>
     </div>
     <div class="wf-item" id="wfItemBenefits">
       <div class="wf-item-header"><span class="wf-item-type">Benefits Enrollment</span><span class="wf-item-date">Sep 3, 2026</span></div>
       <div class="wf-item-title">Dental Cover - AAR Dental Plan</div>
       <div class="wf-item-sub">Benefits &middot; Approver: HR Department</div>
       <span class="wf-item-status pending">Pending HR Approval</span>
-      <div class="wf-item-actions"><button class="wf-withdraw-btn" onclick="withdrawRequest(this,'Dental Cover enrollment')">Withdraw Request</button><button class="wf-view-btn" onclick="sfToast('Opening request details...')">View Details</button></div>
+      <div class="wf-item-actions"><button class="wf-withdraw-btn" onclick="withdrawRequest(this,'Dental Cover enrollment')">Withdraw Request</button><button class="wf-view-btn" onclick="viewWfDetails(this)">View Details</button></div>
     </div>
   </div>
   <div class="wf-list" id="wfApproved" style="display:none">
@@ -1660,13 +1691,14 @@ a{color:#0070f2;text-decoration:none;cursor:pointer}
   </div>
   <div class="modal-body">
     <div class="modal-field-row">
-      <div class="modal-field"><label>Time Type <span class="req">*</span></label><select><option>Annual Leave</option><option>Sick Leave</option><option>Compassionate Leave</option><option>Study Leave</option><option>Maternity Leave</option><option>Paternity Leave</option><option>Unpaid Leave</option></select></div>
-      <div class="modal-field"><label>Balance</label><div class="modal-balance">15 days</div></div>
+      <div class="modal-field"><label>Time Type <span class="req">*</span></label><select id="toLeaveType" onchange="updateLeaveBalance()"><option>Annual Leave</option><option>Sick Leave</option><option>Compassionate Leave</option><option>Study Leave</option><option>Maternity Leave</option><option>Paternity Leave</option><option>Unpaid Leave</option></select></div>
+      <div class="modal-field"><label>Balance</label><div class="modal-balance" id="toBalance">15 days</div></div>
     </div>
     <div class="modal-field-row">
-      <div class="modal-field"><label>Start Date <span class="req">*</span></label><input type="date" value="2026-09-15"></div>
-      <div class="modal-field"><label>End Date <span class="req">*</span></label><input type="date" value="2026-09-19"></div>
+      <div class="modal-field"><label>Start Date <span class="req">*</span></label><input type="date" id="toStartDate" value="2026-09-15" onchange="updateLeaveDays()"></div>
+      <div class="modal-field"><label>End Date <span class="req">*</span></label><input type="date" id="toEndDate" value="2026-09-19" onchange="updateLeaveDays()"></div>
     </div>
+    <div id="toExceedWarn" style="display:none;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:8px 12px;margin-top:-4px;font-size:11px;color:#dc2626;font-weight:600"></div>
     <div class="modal-field"><label>Comment</label><textarea placeholder="Optional comment..."></textarea></div>
     <div class="modal-note">For more information about your time account balances, go to Time Off.</div>
   </div>
@@ -1800,11 +1832,11 @@ a{color:#0070f2;text-decoration:none;cursor:pointer}
     <svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
     Upload Photo
   </div>
-  <div class="avatar-menu-item" onclick="closeAvatarMenu();sfToast('Settings page coming soon')">
+  <div class="avatar-menu-item" onclick="closeAvatarMenu();showSettings()">
     <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
     Settings
   </div>
-  <div class="avatar-menu-item" onclick="closeAvatarMenu();sfToast('AI Usage Acknowledgement viewed')">
+  <div class="avatar-menu-item" onclick="closeAvatarMenu();showAiUsage()">
     <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
     AI Usage Acknowledgement
   </div>
@@ -1856,8 +1888,8 @@ a{color:#0070f2;text-decoration:none;cursor:pointer}
   <div class="spotlight-avatar" id="spotlightAvatar">GW</div>
   <div class="spotlight-badges">
     <span class="spotlight-badge primary">Spotlight</span>
-    <span class="spotlight-badge secondary" onclick="sfToast('Organization chart opening...')">Org Chart</span>
-    <span class="spotlight-badge secondary" onclick="sfToast('Directory card opening...')">Directory</span>
+    <span class="spotlight-badge secondary" onclick="showOrgChart()">Org Chart</span>
+    <span class="spotlight-badge secondary" onclick="showDirectoryCard('MW','Mary Wanjiku','Factory Manager','Production - Kericho','mary.wanjiku@ktda.co.ke','+254 722 123 456','#7c4dff')">Directory</span>
   </div>
   <div class="spotlight-status" id="spotlightStatus" style="color:var(--positive)">
     <svg viewBox="0 0 24 24" style="fill:var(--positive)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
@@ -2006,6 +2038,16 @@ a{color:#0070f2;text-decoration:none;cursor:pointer}
 
 </div><!-- /phone-frame -->
 
+<!-- ===== REUSABLE DETAIL MODAL ===== -->
+<div class="detail-overlay" id="detailOverlay" onclick="closeDetail()"></div>
+<div class="detail-panel" id="detailPanel">
+  <div class="detail-panel-header">
+    <h3 id="detailTitle">Details</h3>
+    <button class="detail-panel-close" onclick="closeDetail()">&times;</button>
+  </div>
+  <div class="detail-panel-body" id="detailBody"></div>
+</div>
+
 <script>
 /* ===== EMPLOYEE DATA STORE ===== */
 const EMP={
@@ -2106,8 +2148,10 @@ function addWorkflowItem(type,title,category,approver){
   // Add to DOM
   const list=document.getElementById('wfPending');
   if(list){
+    // Remove empty state if present
+    const emptyState=list.querySelector('[style*="text-align:center"]');if(emptyState)emptyState.remove();
     const div=document.createElement('div');div.className='wf-item';
-    div.innerHTML='<div class="wf-item-header"><span class="wf-item-type">'+type+'</span><span class="wf-item-date">'+dateStr+'</span></div><div class="wf-item-title">'+title+'</div><div class="wf-item-sub">'+category+' &middot; Approver: '+approver+'</div><span class="wf-item-status pending">Pending Approval</span>';
+    div.innerHTML='<div class="wf-item-header"><span class="wf-item-type">'+type+'</span><span class="wf-item-date">'+dateStr+'</span></div><div class="wf-item-title">'+title+'</div><div class="wf-item-sub">'+category+' &middot; Approver: '+approver+'</div><span class="wf-item-status pending">Pending Approval</span><div class="wf-item-actions"><button class="wf-withdraw-btn" onclick="withdrawRequest(this,\''+title.replace(/'/g,"\\'")+'\')">Withdraw Request</button><button class="wf-view-btn" onclick="viewWfDetails(this)">View Details</button></div>';
     list.insertBefore(div,list.firstChild);
   }
   updateWfCount();
@@ -2289,9 +2333,76 @@ function toggleClock(){clocked=!clocked;const btn=document.getElementById('clock
 function openTimeOff(){document.getElementById('timeOffOverlay').classList.add('open');document.getElementById('timeOffModal').classList.add('open')}
 function closeTimeOff(){document.getElementById('timeOffOverlay').classList.remove('open');document.getElementById('timeOffModal').classList.remove('open')}
 function submitTimeOff(){
+  var type=document.getElementById('toLeaveType').value;
+  var s=document.getElementById('toStartDate'),e=document.getElementById('toEndDate');
+  if(s.value>e.value){showLeaveExceedPopup(0,0,type,'date');return;}
+  var bal=getLeaveBalance(type);
+  var days=calcLeaveDays('toStartDate','toEndDate');
+  if(bal!==null && days>bal){
+    showLeaveExceedPopup(days,bal,type);
+    return;
+  }
   closeTimeOff();
+  if(type==='Annual Leave'){EMP.leave.annual=Math.max(0,EMP.leave.annual-days);var el=document.getElementById('leaveAnnual');if(el)el.textContent=EMP.leave.annual+' days remaining'}
+  if(type==='Sick Leave')EMP.leave.sick=Math.max(0,EMP.leave.sick-days);
+  if(type==='Compassionate Leave')EMP.leave.compassionate=Math.max(0,EMP.leave.compassionate-days);
+  if(type==='Study Leave')EMP.leave.study=Math.max(0,EMP.leave.study-days);
   showSuccess('Leave request submitted','Routed to Mary Wanjiku for approval');
-  addWorkflowItem('Leave Request','Annual Leave Request','Leave','Mary Wanjiku');
+  addWorkflowItem('Leave Request',type+' Request','Leave','Mary Wanjiku');
+}
+function getLeaveBalance(type){
+  var map={'Annual Leave':EMP.leave.annual,'Sick Leave':EMP.leave.sick,'Compassionate Leave':EMP.leave.compassionate,'Study Leave':EMP.leave.study,'Paternity Leave':14};
+  return map[type]!==undefined?map[type]:null;
+}
+function calcLeaveDays(startId,endId){
+  var s=document.getElementById(startId),e=document.getElementById(endId);
+  if(!s||!e||!s.value||!e.value)return 0;
+  var start=new Date(s.value),end=new Date(e.value);
+  var days=0;var d=new Date(start);
+  while(d<=end){var dow=d.getDay();if(dow!==0&&dow!==6)days++;d.setDate(d.getDate()+1);}
+  return days;
+}
+function updateLeaveBalance(){
+  var type=document.getElementById('toLeaveType').value;
+  var bal=getLeaveBalance(type);
+  var el=document.getElementById('toBalance');
+  el.textContent=bal!==null?bal+' days':'N/A';
+  updateLeaveDays();
+}
+function updateLeaveDays(){
+  var type=document.getElementById('toLeaveType').value;
+  var bal=getLeaveBalance(type);
+  var s=document.getElementById('toStartDate'),e=document.getElementById('toEndDate');
+  var warn=document.getElementById('toExceedWarn');
+  if(s.value && e.value && s.value>e.value){
+    warn.textContent='Start date cannot be later than end date. Please adjust your dates.';
+    warn.style.display='block';return;
+  }
+  var days=calcLeaveDays('toStartDate','toEndDate');
+  if(bal!==null && days>bal){
+    warn.textContent='You are requesting '+days+' working days but only have '+bal+' days available for '+type+'. Please adjust your dates.';
+    warn.style.display='block';
+  } else {
+    warn.style.display='none';
+  }
+}
+function showLeaveExceedPopup(days,bal,type,reason){
+  var overlay=document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;display:flex;align-items:center;justify-content:center;animation:fadeIn .2s';
+  var popup=document.createElement('div');
+  popup.style.cssText='background:#fff;border-radius:14px;padding:24px 20px;max-width:310px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.3);margin:0 20px';
+  var title,msg;
+  if(reason==='date'){
+    title='Invalid Date Range';
+    msg='Your <b>start date</b> cannot be later than your <b>end date</b>.<br><br>Please correct the dates and try again.';
+  } else {
+    title='Insufficient Leave Balance';
+    msg='You are requesting <b>'+days+' working days</b> of '+type+' but only have <b>'+bal+' days</b> available.<br><br>Please adjust your dates or select a different leave type.';
+  }
+  popup.innerHTML='<div style="width:48px;height:48px;border-radius:50%;background:#fef2f2;display:flex;align-items:center;justify-content:center;margin:0 auto 12px"><svg viewBox="0 0 24 24" style="width:24px;height:24px;fill:#dc2626"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg></div><div style="font-size:15px;font-weight:700;color:#1a1a1a;margin-bottom:6px">'+title+'</div><div style="font-size:12px;color:#666;line-height:1.5;margin-bottom:16px">'+msg+'</div><button style="width:100%;padding:10px;background:var(--ktda-green);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit" onclick="this.closest(\'div[style]\').parentElement.remove()">Got it, I\'ll adjust</button>';
+  overlay.appendChild(popup);
+  overlay.addEventListener('click',function(ev){if(ev.target===overlay)overlay.remove()});
+  document.querySelector('.phone-frame').appendChild(overlay);
 }
 
 /* ===== TOAST / SUCCESS ===== */
@@ -2355,7 +2466,23 @@ function jLeaveStep2(type){
   type=type||'Annual Leave';
   var s=document.getElementById('jLeaveStart'),e=document.getElementById('jLeaveEnd');
   var sd=s?s.value:'2026-09-15',ed=e?e.value:'2026-09-19';
-  var start=new Date(sd),end=new Date(ed);var days=Math.round((end-start)/(864e5))+1;
+  if(sd>ed){
+    addUser(sd+' to '+ed);showTyping();
+    setTimeout(function(){hideTyping();
+      addBot('<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:10px 12px;margin-bottom:8px"><div style="font-size:12px;font-weight:700;color:#dc2626;margin-bottom:4px">Invalid Date Range</div><div style="font-size:11px;color:#666;line-height:1.4">Your <b>start date</b> cannot be later than your <b>end date</b>. Please correct the dates.</div></div>Please provide corrected dates:<div class="j-field"><label>Start Date</label><input type="date" id="jLeaveStart" value="'+sd+'"></div><div class="j-field"><label>End Date</label><input type="date" id="jLeaveEnd" value="'+ed+'"></div>'+actionBtns([['Submit dates','primary','jLeaveStep2(\''+type+'\')'],['Cancel','secondary','resetJoule()']]))
+    },1e3);
+    return;
+  }
+  var start=new Date(sd),end=new Date(ed);
+  var days=0;var d=new Date(start);while(d<=end){var dow=d.getDay();if(dow!==0&&dow!==6)days++;d.setDate(d.getDate()+1);}
+  var bal=getLeaveBalance(type);
+  if(bal!==null && days>bal){
+    addUser(sd+' to '+ed);showTyping();
+    setTimeout(function(){hideTyping();
+      addBot('<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:10px 12px;margin-bottom:8px"><div style="font-size:12px;font-weight:700;color:#dc2626;margin-bottom:4px">Insufficient Leave Balance</div><div style="font-size:11px;color:#666;line-height:1.4">You are requesting <b>'+days+' working days</b> of '+type+' but only have <b>'+bal+' days</b> available. Please select different dates.</div></div>Please provide updated dates:<div class="j-field"><label>Start Date</label><input type="date" id="jLeaveStart" value="'+sd+'"></div><div class="j-field"><label>End Date</label><input type="date" id="jLeaveEnd" value="'+ed+'"></div>'+actionBtns([['Submit dates','primary','jLeaveStep2(\''+type+'\')'],['Cancel','secondary','resetJoule()']]))
+    },1e3);
+    return;
+  }
   var ret=new Date(end);ret.setDate(ret.getDate()+2);
   addUser(sd+' to '+ed);showTyping();
   setTimeout(function(){hideTyping();
@@ -2705,6 +2832,241 @@ function renderCalendar() {
     html += '<div class="' + cls + '">' + d + label + '</div>';
   }
   cal.innerHTML = html;
+}
+
+
+/* ===== DETAIL MODAL ===== */
+function openDetail(title, bodyHtml){
+  document.getElementById('detailTitle').textContent=title;
+  document.getElementById('detailBody').innerHTML=bodyHtml;
+  document.getElementById('detailOverlay').classList.add('open');
+  document.getElementById('detailPanel').classList.add('open');
+}
+function closeDetail(){
+  document.getElementById('detailOverlay').classList.remove('open');
+  document.getElementById('detailPanel').classList.remove('open');
+}
+
+/* ===== WORKFLOW VIEW DETAILS ===== */
+function viewWfDetails(btn){
+  var item=btn.closest('.wf-item');
+  var type=item.querySelector('.wf-item-type')?item.querySelector('.wf-item-type').textContent:'Request';
+  var title=item.querySelector('.wf-item-title')?item.querySelector('.wf-item-title').textContent:'';
+  var sub=item.querySelector('.wf-item-sub')?item.querySelector('.wf-item-sub').textContent:'';
+  var date=item.querySelector('.wf-item-date')?item.querySelector('.wf-item-date').textContent:'';
+  var status=item.querySelector('.wf-item-status')?item.querySelector('.wf-item-status').textContent:'Pending';
+  var statusCls=status.toLowerCase().includes('pending')?'pending':'approved';
+  var parts=sub.split(' \u00b7 ');
+  var category=parts[0]||'';
+  var approver=parts[1]?parts[1].replace('Approver: ',''):'';
+  var body='<div class="detail-section"><div class="detail-section-title">Request Information</div>';
+  body+='<div class="detail-row"><span class="detail-row-label">Type</span><span class="detail-row-value">'+type+'</span></div>';
+  body+='<div class="detail-row"><span class="detail-row-label">Title</span><span class="detail-row-value">'+title+'</span></div>';
+  body+='<div class="detail-row"><span class="detail-row-label">Category</span><span class="detail-row-value">'+category+'</span></div>';
+  body+='<div class="detail-row"><span class="detail-row-label">Submitted</span><span class="detail-row-value">'+date+'</span></div>';
+  body+='<div class="detail-row"><span class="detail-row-label">Status</span><span class="detail-row-value"><span class="detail-badge '+statusCls+'">'+status+'</span></span></div>';
+  body+='</div>';
+  if(approver){
+    body+='<div class="detail-section"><div class="detail-section-title">Approval Chain</div>';
+    body+='<div style="display:flex;align-items:center;gap:10px;padding:8px 0"><div style="width:32px;height:32px;border-radius:50%;background:var(--ktda-green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700">'+approver.split(' ').map(function(w){return w[0]}).join('')+'</div><div><div style="font-size:12px;font-weight:600">'+approver+'</div><div style="font-size:10px;color:var(--text-secondary)">Pending review</div></div></div>';
+    body+='</div>';
+  }
+  body+='<div class="detail-section"><div class="detail-section-title">Timeline</div>';
+  body+='<div style="padding-left:12px;border-left:2px solid var(--border-light)">';
+  body+='<div style="position:relative;padding:0 0 12px 14px"><div style="position:absolute;left:-7px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--ktda-green)"></div><div style="font-size:11px;font-weight:600">Submitted</div><div style="font-size:10px;color:var(--text-secondary)">'+date+' by James Ochieng</div></div>';
+  body+='<div style="position:relative;padding:0 0 0 14px"><div style="position:absolute;left:-7px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--border);border:2px solid #fff"></div><div style="font-size:11px;font-weight:600;color:var(--text-secondary)">Awaiting Approval</div><div style="font-size:10px;color:var(--text-tertiary)">'+approver+'</div></div>';
+  body+='</div></div>';
+  body+='<div class="detail-actions"><button class="da-secondary" onclick="closeDetail()">Close</button></div>';
+  openDetail('Request Details', body);
+}
+
+/* ===== ALL ACTIONS MENU ===== */
+function toggleActionsMenu(){
+  var menu=document.getElementById('allActionsMenu');
+  if(!menu) return;
+  menu.classList.toggle('open');
+  // close on outside click
+  if(menu.classList.contains('open')){
+    setTimeout(function(){document.addEventListener('click',closeActionsMenuOutside,{once:true})},10);
+  }
+}
+function closeActionsMenuOutside(e){
+  var menu=document.getElementById('allActionsMenu');
+  if(menu && !menu.contains(e.target)) menu.classList.remove('open');
+}
+function actionMenuItem(action){
+  var menu=document.getElementById('allActionsMenu');
+  if(menu) menu.classList.remove('open');
+  var actions={
+    'edit_profile': function(){ showProfileTab(document.querySelector('.profile-nav-item'),document.querySelector('.profile-tab').id); sfToast('Edit mode - tap any field pencil icon to edit'); },
+    'change_photo': function(){ document.getElementById('profilePhotoInput').click(); },
+    'request_leave': function(){ openTimeOff(); },
+    'view_pay': function(){ showPage('pay'); },
+    'view_benefits': function(){ showPage('benefits'); },
+    'view_team': function(){ showPage('team'); },
+    'org_chart': function(){ showOrgChart(); },
+    'print_profile': function(){ sfToast('Preparing profile PDF...'); }
+  };
+  if(actions[action]) actions[action]();
+}
+
+/* ===== ORG CHART VIEW ===== */
+function showOrgChart(){
+  var body='<div style="text-align:center;padding:10px 0">';
+  body+='<div style="display:inline-block;background:var(--bg-subtle);border-radius:10px;padding:10px 16px;margin-bottom:6px"><div style="width:36px;height:36px;border-radius:50%;background:#7c4dff;color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin:0 auto 4px">MW</div><div style="font-size:11px;font-weight:600">Mary Wanjiku</div><div style="font-size:9px;color:var(--text-secondary)">Factory Manager</div></div>';
+  body+='<div style="width:2px;height:16px;background:var(--border);margin:0 auto"></div>';
+  body+='<div style="display:inline-block;background:var(--ktda-green-pale);border:2px solid var(--ktda-green);border-radius:10px;padding:10px 16px;margin-bottom:6px"><div style="width:36px;height:36px;border-radius:50%;background:var(--ktda-green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;margin:0 auto 4px">JO</div><div style="font-size:11px;font-weight:700;color:var(--ktda-green)">James Ochieng</div><div style="font-size:9px;color:var(--text-secondary)">Factory Supervisor</div></div>';
+  body+='<div style="display:flex;justify-content:center;gap:4px;margin-top:4px"><div style="width:2px;height:16px;background:var(--border)"></div></div>';
+  body+='<div style="display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:4px">';
+  var reports=[['GW','Grace Wanjiku','Line Operator','#2d6a3f'],['PM','Peter Mutai','Quality Inspector','#c8a951'],['FC','Faith Chebet','Packer','#a100c2'],['DK','David Kiprop','Machine Tech','#354a5f']];
+  reports.forEach(function(r){
+    body+='<div style="background:var(--bg-subtle);border-radius:8px;padding:8px 10px;min-width:70px;text-align:center"><div style="width:28px;height:28px;border-radius:50%;background:'+r[3]+';color:#fff;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;margin:0 auto 3px">'+r[0]+'</div><div style="font-size:9px;font-weight:600">'+r[1]+'</div><div style="font-size:8px;color:var(--text-tertiary)">'+r[2]+'</div></div>';
+  });
+  body+='</div></div>';
+  body+='<div class="detail-actions"><button class="da-secondary" onclick="closeDetail()">Close</button></div>';
+  openDetail('Organization Chart', body);
+}
+
+/* ===== DIRECTORY CARD ===== */
+function showDirectoryCard(init,name,role,dept,email,phone,color){
+  var body='<div style="text-align:center;padding:10px 0 16px">';
+  body+='<div style="width:56px;height:56px;border-radius:50%;background:'+(color||'var(--ktda-green)')+';color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;margin:0 auto 8px">'+init+'</div>';
+  body+='<div style="font-size:15px;font-weight:700">'+name+'</div>';
+  body+='<div style="font-size:11px;color:var(--text-secondary)">'+role+'</div>';
+  body+='</div>';
+  body+='<div class="detail-section"><div class="detail-section-title">Contact Information</div>';
+  body+='<div class="detail-row"><span class="detail-row-label">Department</span><span class="detail-row-value">'+dept+'</span></div>';
+  body+='<div class="detail-row"><span class="detail-row-label">Email</span><span class="detail-row-value" style="color:var(--ktda-green)">'+email+'</span></div>';
+  body+='<div class="detail-row"><span class="detail-row-label">Phone</span><span class="detail-row-value">'+phone+'</span></div>';
+  body+='<div class="detail-row"><span class="detail-row-label">Location</span><span class="detail-row-value">Kericho Factory #23</span></div>';
+  body+='</div>';
+  body+='<div class="detail-actions"><button class="da-primary" onclick="closeDetail();sfToast(\'Opening chat with '+name+'...\')">Send Message</button><button class="da-secondary" onclick="closeDetail()">Close</button></div>';
+  openDetail('Employee Directory', body);
+}
+
+/* ===== PERSONAL INFO VIEW ALL ===== */
+function viewAllPersonalInfo(){
+  var body='<div class="detail-section"><div class="detail-section-title">Personal Information</div>';
+  body+='<div class="detail-row"><span class="detail-row-label">First Name</span><span class="detail-row-value">'+EMP.firstName+'</span></div>';
+  body+='<div class="detail-row"><span class="detail-row-label">Middle Name</span><span class="detail-row-value">'+(EMP.middleName||'Otieno')+'</span></div>';
+  body+='<div class="detail-row"><span class="detail-row-label">Last Name</span><span class="detail-row-value">'+EMP.lastName+'</span></div>';
+  body+='<div class="detail-row"><span class="detail-row-label">Salutation</span><span class="detail-row-value">Mr.</span></div>';
+  body+='<div class="detail-row"><span class="detail-row-label">Date of Birth</span><span class="detail-row-value">'+EMP.dob+'</span></div>';
+  body+='<div class="detail-row"><span class="detail-row-label">Country of Birth</span><span class="detail-row-value">Kenya</span></div>';
+  body+='<div class="detail-row"><span class="detail-row-label">Nationality</span><span class="detail-row-value">Kenyan</span></div>';
+  body+='<div class="detail-row"><span class="detail-row-label">Marital Status</span><span class="detail-row-value">'+EMP.maritalStatus+'</span></div>';
+  body+='<div class="detail-row"><span class="detail-row-label">Gender</span><span class="detail-row-value">Male</span></div>';
+  body+='<div class="detail-row"><span class="detail-row-label">Preferred Language</span><span class="detail-row-value">English</span></div>';
+  body+='</div>';
+  body+='<div class="detail-actions"><button class="da-secondary" onclick="closeDetail()">Close</button></div>';
+  openDetail('Personal Information', body);
+}
+
+/* ===== BENEFITS VIEW ALL ===== */
+function viewAllBenefits(){
+  var body='<div class="detail-section"><div class="detail-section-title">Enrolled Benefits</div>';
+  var allBens=[
+    ['NHIF Medical Cover','Active','KES 1,700/mo','Jan 1, 2020'],
+    ['Group Life Assurance','Active','Employer-funded','Mar 15, 2019'],
+    ['NSSF Pension','Active','KES 2,160/mo','Mar 15, 2019'],
+    ['WIBA Cover','Active','Employer-funded','Mar 15, 2019'],
+    ['Tea Allocation','Active','6kg/mo free','Mar 15, 2019'],
+    ['Transport Allowance','Active','KES 5,000/mo','Jan 1, 2020']
+  ];
+  EMP.benefits.forEach(function(b){
+    var found=false;
+    allBens.forEach(function(ab){if(ab[0]===b)found=true;});
+    if(!found) allBens.push([b,'Active','Pending','Sep 2026']);
+  });
+  allBens.forEach(function(b){
+    body+='<div style="display:flex;align-items:center;padding:8px 0;border-bottom:1px solid var(--border-light);gap:10px">';
+    body+='<div style="width:32px;height:32px;border-radius:8px;background:var(--ktda-green-pale);display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:var(--ktda-green)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div>';
+    body+='<div style="flex:1"><div style="font-size:12px;font-weight:600">'+b[0]+'</div><div style="font-size:10px;color:var(--text-secondary)">'+b[2]+' &middot; Since '+b[3]+'</div></div>';
+    body+='<span class="detail-badge approved">'+b[1]+'</span></div>';
+  });
+  body+='</div>';
+  body+='<div class="detail-actions"><button class="da-primary" onclick="closeDetail();showPage(\x27benefits\x27)">Manage Benefits</button><button class="da-secondary" onclick="closeDetail()">Close</button></div>';
+  openDetail('All Benefits', body);
+}
+
+/* ===== ORG UPDATE DETAIL ===== */
+function showOrgUpdate(title,content){
+  openDetail(title, '<div style="font-size:12px;line-height:1.6;color:var(--text-primary)">'+content+'</div><div class="detail-actions"><button class="da-secondary" onclick="closeDetail()">Close</button></div>');
+}
+
+/* ===== SETTINGS PANEL ===== */
+function showSettings(){
+  var body='<div class="detail-section"><div class="detail-section-title">Display</div>';
+  body+='<div class="detail-row"><span class="detail-row-label">Language</span><span class="detail-row-value">English</span></div>';
+  body+='<div class="detail-row"><span class="detail-row-label">Time Zone</span><span class="detail-row-value">EAT (UTC+3)</span></div>';
+  body+='<div class="detail-row"><span class="detail-row-label">Date Format</span><span class="detail-row-value">DD/MM/YYYY</span></div>';
+  body+='</div>';
+  body+='<div class="detail-section"><div class="detail-section-title">Notifications</div>';
+  body+='<div class="detail-row"><span class="detail-row-label">Push Notifications</span><span class="detail-row-value" style="color:var(--positive)">Enabled</span></div>';
+  body+='<div class="detail-row"><span class="detail-row-label">Email Alerts</span><span class="detail-row-value" style="color:var(--positive)">Enabled</span></div>';
+  body+='<div class="detail-row"><span class="detail-row-label">SMS Alerts</span><span class="detail-row-value" style="color:var(--text-tertiary)">Disabled</span></div>';
+  body+='</div>';
+  body+='<div class="detail-section"><div class="detail-section-title">Security</div>';
+  body+='<div class="detail-row"><span class="detail-row-label">Two-Factor Auth</span><span class="detail-row-value" style="color:var(--positive)">Active</span></div>';
+  body+='<div class="detail-row"><span class="detail-row-label">Last Password Change</span><span class="detail-row-value">Jul 12, 2026</span></div>';
+  body+='<div class="detail-row"><span class="detail-row-label">Active Sessions</span><span class="detail-row-value">1</span></div>';
+  body+='</div>';
+  body+='<div class="detail-actions"><button class="da-secondary" onclick="closeDetail()">Close</button></div>';
+  openDetail('Settings', body);
+}
+
+/* ===== AI USAGE ACKNOWLEDGEMENT ===== */
+function showAiUsage(){
+  var body='<div style="font-size:12px;line-height:1.6;color:var(--text-primary)">';
+  body+='<p><b>SAP Joule AI Assistant</b> is used in this application to provide conversational HR self-service capabilities.</p>';
+  body+='<p><b>Data Processing:</b> Joule processes your queries in real-time using SAP Business AI. Your personal data is handled in accordance with KTDA\'s data privacy policy and SAP\'s AI Ethics guidelines.</p>';
+  body+='<p><b>What Joule Can Access:</b></p><ul style="margin:4px 0 8px 16px"><li>Your employee profile data</li><li>Leave balances and requests</li><li>Benefits enrollment information</li><li>Organizational hierarchy</li></ul>';
+  body+='<p><b>What Joule Cannot Do:</b></p><ul style="margin:4px 0 8px 16px"><li>Access other employees\' personal data</li><li>Make changes without your explicit confirmation</li><li>Share data outside SAP SuccessFactors</li></ul>';
+  body+='<p style="color:var(--text-secondary);font-size:10px;margin-top:12px">Last updated: Sep 1, 2026 | Version 2.1</p>';
+  body+='</div>';
+  body+='<div class="detail-actions"><button class="da-primary" onclick="closeDetail()">I Acknowledge</button></div>';
+  openDetail('AI Usage Policy', body);
+}
+
+/* ===== BENEFITS ACTIONS ===== */
+function showOpenEnrollment(){
+  var body='<div class="detail-section"><div class="detail-section-title">Open Enrollment 2027</div>';
+  body+='<div style="background:var(--ktda-green-pale);border-radius:8px;padding:12px;margin-bottom:12px"><div style="font-size:12px;font-weight:700;color:var(--ktda-green);margin-bottom:4px">Enrollment Window</div><div style="font-size:11px;color:var(--text-secondary)">January 6 - January 31, 2027</div></div>';
+  body+='<div style="font-size:12px;line-height:1.6;color:var(--text-primary);margin-bottom:12px">During open enrollment you can:</div>';
+  body+='<ul style="font-size:11px;line-height:1.8;color:var(--text-primary);margin:0 0 12px 16px"><li>Add or remove medical dependants</li><li>Upgrade NHIF cover tier</li><li>Enroll in optional benefits (Optical, Dental, Spouse Life)</li><li>Update beneficiary nominations</li><li>Review pension contribution rates</li></ul>';
+  body+='<div style="font-size:10px;color:var(--text-secondary)">You will receive an email notification when enrollment opens.</div></div>';
+  body+='<div class="detail-actions"><button class="da-primary" onclick="closeDetail();openJoule();setTimeout(function(){jFlow(\'benefits_enroll\')},400)">Preview Available Benefits</button><button class="da-secondary" onclick="closeDetail()">Close</button></div>';
+  openDetail('Open Enrollment', body);
+}
+
+function showLifeEvent(){
+  var body='<div class="detail-section"><div class="detail-section-title">Report a Life Event</div>';
+  body+='<div style="font-size:12px;line-height:1.6;color:var(--text-primary);margin-bottom:12px">A qualifying life event allows you to make benefits changes outside of open enrollment.</div>';
+  var events=[['Marriage','Update dependants, add spouse cover'],['Birth / Adoption','Add child dependant, parental leave'],['Divorce','Remove dependant, update beneficiaries'],['Death of Dependant','Update beneficiaries, remove cover'],['Loss of Other Coverage','Enroll in additional benefits']];
+  events.forEach(function(ev){
+    body+='<div style="display:flex;align-items:center;padding:8px 0;border-bottom:1px solid var(--border-light);gap:10px;cursor:pointer" onclick="closeDetail();sfToast(\''+ev[0]+' form opened. Please submit supporting documents.\')">';
+    body+='<div style="width:32px;height:32px;border-radius:8px;background:#e8f0fe;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:#0070f2"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm-1 7V3.5L18.5 9H13z"/></svg></div>';
+    body+='<div style="flex:1"><div style="font-size:12px;font-weight:600">'+ev[0]+'</div><div style="font-size:10px;color:var(--text-secondary)">'+ev[1]+'</div></div>';
+    body+='<span style="color:var(--text-tertiary);font-size:14px">&rsaquo;</span></div>';
+  });
+  body+='</div>';
+  body+='<div class="detail-actions"><button class="da-secondary" onclick="closeDetail()">Close</button></div>';
+  openDetail('Life Events', body);
+}
+
+function showClaims(){
+  var body='<div class="detail-section"><div class="detail-section-title">Recent Claims</div>';
+  var claims=[['Outpatient Visit','Aug 12, 2026','KES 3,200','Approved'],['Pharmacy','Jul 28, 2026','KES 1,450','Approved'],['Dental Checkup','Jun 15, 2026','KES 5,800','Approved'],['Lab Tests','May 20, 2026','KES 2,100','Approved']];
+  claims.forEach(function(cl){
+    body+='<div style="display:flex;align-items:center;padding:8px 0;border-bottom:1px solid var(--border-light);gap:10px">';
+    body+='<div style="flex:1"><div style="font-size:12px;font-weight:600">'+cl[0]+'</div><div style="font-size:10px;color:var(--text-secondary)">'+cl[1]+'</div></div>';
+    body+='<div style="text-align:right"><div style="font-size:12px;font-weight:600">'+cl[2]+'</div><span class="detail-badge approved">'+cl[3]+'</span></div></div>';
+  });
+  body+='</div>';
+  body+='<div class="detail-section"><div class="detail-section-title">Submit New Claim</div>';
+  body+='<div style="font-size:11px;color:var(--text-secondary);line-height:1.5">To submit a new medical claim, visit any NHIF-accredited facility and present your staff ID. Claims are processed automatically via the NHIF portal.</div></div>';
+  body+='<div class="detail-actions"><button class="da-secondary" onclick="closeDetail()">Close</button></div>';
+  openDetail('Medical Claims', body);
 }
 
 </script>
